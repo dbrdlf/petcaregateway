@@ -1,0 +1,54 @@
+spring:
+  application:
+    name: pet-care-api-gateway
+  cloud:
+    gateway:
+      routes:
+          - id: pet-care-user-service
+#            uri : http://localhost:8081
+            uri: lb://pet-care-user-service
+            predicates:
+              - Path=/api/customer/**
+            filters:
+#              - AddRequestHeader=x-forwarded-for, localhost:8090
+#              - AddRequestHeader=x-forwarded-prefix, /api/customer
+#              - AddRequestHeader=x-forwarded-port, 8090
+#              - StripPrefix=1
+
+          - id: test-web
+            uri: lb://test-web
+            predicates:
+              - Path=/test/**
+    loadbalancer:
+      ribbon:
+        enabled: false
+#      x-forwarded:
+#        for-enabled: true
+#        enabled: true
+#        host-append: true
+#        for-append: true
+#        port-append: true
+server:
+  port: 8090
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka
+
+security:
+  oauth2:
+    client:
+      client-id: pet-care-client
+      client-secret: pet-care-secret
+    resource:
+      jwt:
+        key-value: jwt_secret_key
+
+#management:
+#  endpoint:
+#    web:
+#      exposure:
+#        include:
+#          - "gateway"
+#    gateway:
+#      enabled: true
